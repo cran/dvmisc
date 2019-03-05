@@ -3,28 +3,32 @@ using namespace Rcpp;
 
 //' Mean of Integer Values
 //' 
-//' Written in C++, this function should always run faster than 
-//' \code{\link[base]{mean}} for integer vectors/matrices. Not valid for 
-//' non-integer objects.
+//' Written in C++, this function runs faster than \code{\link[base]{mean}} for 
+//' large integer vectors/matrices.
 //' 
 //' @param x Integer vector or matrix.
 //' 
 //' @return Numeric value.
 //' 
-//' @examples 
-//' # For integer objects, mean_i is typically much faster than mean.
-//' x <- rpois(100, lambda = 5)
+//' @examples
+//' # For very large integer objects, sum_i is faster than sum
+//' x <- rpois(100000, lambda = 5)
 //' mean(x) == mean_i(x)
-//' benchmark(mean(x), mean_i(x), replications = 10000)
+//' benchmark(mean(x), mean_i(x), replications = 1000)
+//' 
+//' # For smaller integer objects, sum_i is slower than sum 
+//' x <- rpois(1000, lambda = 5)
+//' mean(x) == mean_i(x)
+//' benchmark(mean(x), mean_i(x), replications = 1000)
 //' 
 //' @export
 // [[Rcpp::export]]
 double mean_i(IntegerVector x) {
   int n = x.size();
-  double sumx = 0;
+  double sum_x = 0;
   for (int a = 0; a < n; ++a) {
-    sumx += x[a];
+    sum_x += x[a];
   }
-  double meanx = sumx / n;
-  return(meanx);
+  double mean_x = sum_x / n;
+  return mean_x;
 }

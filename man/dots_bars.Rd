@@ -4,10 +4,13 @@
 \alias{dots_bars}
 \title{Plot Points +/- Error Bars}
 \usage{
-dots_bars(y = NULL, bars = NULL, bars.lower = y - bars, bars.upper = y +
-  bars, group.labels = NULL, subgroup.labels = NULL, subgroup.pch = NULL,
-  subgroup.col = NULL, points.list = NULL, arrows.list = NULL,
-  axis.list = NULL, legend.list = NULL, ...)
+dots_bars(y = NULL, bars = NULL, bars.lower = y - bars,
+  bars.upper = y + bars, truth = NULL, group.labels = NULL,
+  group.dividers = TRUE, subgroup.spacing = 1,
+  subgroup.labels = NULL, subgroup.pch = NULL, subgroup.col = NULL,
+  points.list = NULL, arrows.list = NULL, xaxis.list = NULL,
+  yaxis.list = xaxis.list, abline.dividers.list = NULL,
+  abline.truth.list = NULL, legend.list = NULL, ...)
 }
 \arguments{
 \item{y}{Numeric vector of y-values for different groups, or numeric matrix 
@@ -25,7 +28,16 @@ group/subgroup.}
 is) specifying the position of the upper end of the error bar for each 
 group/subgroup.}
 
-\item{group.labels}{Character vector giving labels for the groups.}
+\item{truth}{Numeric value specifying true value of parameter being 
+estimated. If specified, a horizontal reference line is added to the plot.}
+
+\item{group.labels}{Character vector of labels for the groups.}
+
+\item{group.dividers}{Logical value for whether to add vertical lines 
+distinguishing the groups.}
+
+\item{subgroup.spacing}{Numeric value controlling the amount of spacing 
+between subgroups, with values > 1 corresponding to more spacing.}
 
 \item{subgroup.labels}{Character vector giving labels for the subgroups.}
 
@@ -35,16 +47,27 @@ group.}
 \item{subgroup.col}{Plotting color for different subgroups within each group.}
 
 \item{points.list}{Optional list of inputs to pass to 
-\code{\link[graphics]{points}} function.}
+\code{\link[graphics]{points}}.}
 
 \item{arrows.list}{Optional list of inputs to pass to 
-\code{\link[graphics]{arrows}} function.}
+\code{\link[graphics]{arrows}}.}
 
-\item{axis.list}{Optional list of inputs to pass to 
-\code{\link[graphics]{axis}} function.}
+\item{xaxis.list}{Optional list of inputs to pass to 
+\code{\link[graphics]{axis}} for x-axis.}
+
+\item{yaxis.list}{Optional list of inputs to pass to 
+\code{\link[graphics]{axis}} for y-axis.}
+
+\item{abline.dividers.list}{Optional list of inputs to pass to 
+\code{\link[graphics]{abline}} for group dividers. Only used if 
+\code{group.dividers = TRUE}.}
+
+\item{abline.truth.list}{Optional list of inputs to pass to 
+\code{\link[graphics]{abline}} for horizontal line at true value of 
+parameter. Only used if \code{truth} is specified.}
 
 \item{legend.list}{Optional list of inputs to pass to 
-\code{\link[graphics]{legend}} function.}
+\code{\link[graphics]{legend}}.}
 
 \item{...}{Additional arguments to pass to \code{\link[graphics]{plot}} 
 function.}
@@ -67,7 +90,7 @@ fig1 <- dots_bars(y = means, bars = sds, main = "Mean +/- SD by Group",
                   ylab = "Mean +/- SD")
                   
 # Simulate BMI values for males and females in 3 different age groups, and 
-# graph mean +/- 95\\\% CI
+# graph mean +/- 95\% CI
 sex <- as.factor(c(rep("Male", 300), rep("Female", 300)))
 age <- as.factor(rep(c("Young", "Middle", "Old"), 2))
 bmi <- c(rnorm(100, 25, 4), rnorm(100, 26, 4.25), rnorm(100, 27, 4.5),

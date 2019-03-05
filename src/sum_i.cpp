@@ -4,7 +4,7 @@ using namespace Rcpp;
 //' Sum of Integer Values
 //' 
 //' Written in C++, this function runs faster than \code{\link[base]{sum}} for 
-//' large integer vectors/matrices. 
+//' large integer vectors/matrices.
 //' 
 //' @param x Integer vector or matrix.
 //' 
@@ -29,5 +29,5 @@ int sum_i(IntegerVector x) {
   for (int a = 0; a < n; ++a) {
     sumx += x[a];
   }
-  return(sumx);
+  return sumx;
 }

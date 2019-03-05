@@ -13,14 +13,18 @@ mean_i(x)
 Numeric value.
 }
 \description{
-Written in C++, this function should always run faster than 
-\code{\link[base]{mean}} for integer vectors/matrices. Not valid for 
-non-integer objects.
+Written in C++, this function runs faster than \code{\link[base]{mean}} for 
+large integer vectors/matrices.
 }
 \examples{
-# For integer objects, mean_i is typically much faster than mean.
-x <- rpois(100, lambda = 5)
+# For very large integer objects, sum_i is faster than sum
+x <- rpois(100000, lambda = 5)
 mean(x) == mean_i(x)
-benchmark(mean(x), mean_i(x), replications = 10000)
+benchmark(mean(x), mean_i(x), replications = 1000)
+
+# For smaller integer objects, sum_i is slower than sum 
+x <- rpois(1000, lambda = 5)
+mean(x) == mean_i(x)
+benchmark(mean(x), mean_i(x), replications = 1000)
 
 }
