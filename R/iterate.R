@@ -1,14 +1,17 @@
 #' Iterate Function Over All Combinations of User-Specified Inputs, Potentially 
 #' Multiple Times
 #' 
-#' Same idea as \code{\link[purrr:map2]{pmap}}, but with some different 
-#' functionality. It runs all combinations of inputs rather than the 1st set, 
-#' 2nd set, and so forth, and multiple trials can be run for each scenario, 
-#' which can be useful for simulations.
+#' Same idea as \strong{purrr}::\emph{pmap}, but with some different 
+#' functionality. It can runs all combinations of vector-valued arguments in 
+#' \code{...} or the 1st set, 2nd set, and so forth, and multiple trials can be 
+#' run for each scenario, which can be useful for simulations.
 #' 
 #' @param f A function.
 #' @param ... Arguments to \code{f}, any of which can be vector-valued.
-#' @param fix List of arguments to hold fixed rather than loop over.
+#' @param all_combinations Logical value for whether to iterate over all 
+#' combinations of arguments in \code{...}, or just use the first set of 
+#' elements, then the second, and so on.
+#' @param fix List of arguments to \code{f} to hold fixed rather than loop over.
 #' @param trials Numeric value.
 #' @param varnames Character vector of names for values that \code{f} returns, 
 #' to avoid generic labels (V1, V2, ...).
@@ -32,18 +35,23 @@
 #'   summarise(mean(p < 0.05))
 #'
 #' @export
-iterate <- function(f, ..., fix = NULL, trials = 1, varnames = NULL) {
+iterate <- function(
+  f, ..., all_combinations = TRUE, fix = NULL, trials = 1, varnames = NULL) {
   
   # Construct data frame where each row is 1 set of inputs
-  arg.combos <- expand_grid(...)
+  if (all_combinations) {
+    arg.sets <- expand_grid(...)
+  } else {
+    arg.sets <- as.data.frame(list(...), stringsAsFactors = FALSE)
+  }
   
   # Loop through combinations and run however many trials of each set
-  growing.list <- vector(mode = "list", length = nrow(arg.combos) * trials)
+  growing.list <- vector(mode = "list", length = nrow(arg.sets) * trials)
   index <- 0
-  for (ii in 1: nrow(arg.combos)) {
+  for (ii in 1: nrow(arg.sets)) {
     for (jj in 1: trials) {
       index <- index + 1
-      growing.list[[index]] <- do.call(f, c(arg.combos[ii, , drop = FALSE], fix))
+      growing.list[[index]] <- do.call(f, c(arg.sets[ii, , drop = FALSE], fix))
     }
   }
   
@@ -73,7 +81,7 @@ iterate <- function(f, ..., fix = NULL, trials = 1, varnames = NULL) {
   }
   
   # Return data table with results
-  ret <- cbind(as.data.table(arg.combos[rep(1: nrow(arg.combos), each = trials), , drop = FALSE]), 
+  ret <- cbind(as.data.table(arg.sets[rep(1: nrow(arg.sets), each = trials), , drop = FALSE]), 
                premerge)
   return(ret)
   
